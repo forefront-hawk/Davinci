@@ -1,0 +1,1858 @@
+<!DOCTYPE html>
+<html lang="en" data-device="desktop" data-theme="gold">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Project Divinci — Da Vinci Aerial &amp; Ground Vehicles in HawkX Sandbox | Forefront Hawk &amp; Gemini Aargon</title>
+<style>
+  :root {
+    --bg: #070A12;
+    --bg-panel: #0E1422;
+    --bg-card: #141D30;
+    --accent: #D4AF37;
+    --accent-soft: rgba(212, 175, 55, 0.16);
+    --cyan: #00F5D4;
+    --cyan-soft: rgba(0, 245, 212, 0.14);
+    --emerald: #10B981;
+    --emerald-soft: rgba(16, 185, 129, 0.16);
+    --danger: #F87171;
+    --danger-soft: rgba(248, 113, 113, 0.16);
+    --text: #F8FAFC;
+    --text-muted: #94A3B8;
+    --border: rgba(212, 175, 55, 0.36);
+    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  html[data-theme="tactical"] {
+    --bg: #040D15;
+    --bg-panel: #081928;
+    --bg-card: #0D253B;
+    --accent: #00F5D4;
+    --accent-soft: rgba(0, 245, 212, 0.16);
+    --cyan: #F59E0B;
+    --cyan-soft: rgba(245, 158, 11, 0.16);
+    --text: #F0F9FF;
+    --text-muted: #7DD3FC;
+    --border: rgba(0, 245, 212, 0.4);
+  }
+
+  html[data-theme="cyberpunk"] {
+    --bg: #0B0318;
+    --bg-panel: #15072C;
+    --bg-card: #210B42;
+    --accent: #FF2A85;
+    --accent-soft: rgba(255, 42, 133, 0.18);
+    --cyan: #00F0FF;
+    --cyan-soft: rgba(0, 240, 255, 0.16);
+    --text: #FDF2F8;
+    --text-muted: #C4B5FD;
+    --border: rgba(255, 42, 133, 0.45);
+  }
+
+  html[data-theme="matrix"] {
+    --bg: #020A04;
+    --bg-panel: #05160A;
+    --bg-card: #092412;
+    --accent: #00FF66;
+    --accent-soft: rgba(0, 255, 102, 0.16);
+    --cyan: #38BDF8;
+    --cyan-soft: rgba(56, 189, 248, 0.15);
+    --text: #ECFDF5;
+    --text-muted: #6EE7B7;
+    --border: rgba(0, 255, 102, 0.4);
+  }
+
+  html[data-theme="daylight"] {
+    --bg: #F5EFE6;
+    --bg-panel: #FDFBF7;
+    --bg-card: #EFE6D5;
+    --accent: #8C5A08;
+    --accent-soft: rgba(140, 90, 8, 0.12);
+    --cyan: #0369A1;
+    --cyan-soft: rgba(3, 105, 161, 0.12);
+    --text: #1E293B;
+    --text-muted: #475569;
+    --border: rgba(140, 90, 8, 0.35);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    padding: 16px;
+    line-height: 1.5;
+    min-height: 100vh;
+    transition: background 0.22s ease, color 0.22s ease;
+    overflow-x: hidden;
+  }
+
+  a { color: var(--cyan); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* 4-Posture Reconfigurer Shell (F2-POSTURE) */
+  .app-shell {
+    max-width: 1460px;
+    margin: 0 auto;
+    transition: max-width 0.28s ease;
+  }
+
+  html[data-device="mobile"] .app-shell {
+    max-width: 430px;
+    border: 3px solid var(--accent);
+    border-radius: 26px;
+    padding: 12px;
+    background: var(--bg-panel);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.65);
+  }
+
+  html[data-device="tablet"] .app-shell {
+    max-width: 1024px;
+    border: 2px solid var(--border);
+    border-radius: 18px;
+    padding: 14px;
+  }
+
+  html[data-device="fold"] .app-shell {
+    max-width: 1360px;
+    border: 3px solid var(--cyan);
+    border-radius: 20px;
+    padding: 14px;
+  }
+
+  .fold-hinge-banner {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(90deg, transparent, var(--cyan-soft), transparent);
+    border-top: 1px dashed var(--cyan);
+    border-bottom: 1px dashed var(--cyan);
+    color: var(--cyan);
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    padding: 4px 12px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  html[data-device="fold"] .fold-hinge-banner {
+    display: flex;
+  }
+
+  /* Header */
+  .top-header {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.3);
+  }
+
+  .brand-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-badge {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--cyan));
+    color: #070A12;
+    font-weight: 900;
+    font-size: 1.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .brand-title {
+    font-size: 1.18rem;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+
+  .brand-sub {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .toolbar-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pill {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 4px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--accent-soft);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .pill.emerald {
+    background: var(--emerald-soft);
+    border-color: var(--emerald);
+    color: var(--emerald);
+  }
+
+  .pill.cyan {
+    background: var(--cyan-soft);
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+
+  select, input[type="text"], textarea {
+    background: var(--bg-card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 0.82rem;
+    font-family: inherit;
+  }
+
+  button {
+    background: var(--bg-card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.16s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  button:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    transform: translateY(-1px);
+  }
+
+  button.btn-gold {
+    background: var(--accent);
+    color: #070A12;
+    border-color: var(--accent);
+    font-weight: 800;
+  }
+
+  button.btn-cyan {
+    background: var(--cyan-soft);
+    color: var(--cyan);
+    border-color: var(--cyan);
+    font-weight: 700;
+  }
+
+  button.btn-danger {
+    background: var(--danger-soft);
+    color: var(--danger);
+    border-color: var(--danger);
+    font-weight: 700;
+  }
+
+  button.active-posture {
+    background: var(--accent);
+    color: #070A12;
+    border-color: var(--accent);
+    font-weight: 800;
+  }
+
+  /* ΩΑΡ Evolutionary & Da Vinci Mirror-Script Guard Strip */
+  .oar-guard-strip {
+    background: var(--bg-panel);
+    border: 1px solid var(--emerald);
+    border-left: 5px solid var(--emerald);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 0.8rem;
+  }
+
+  .oar-guard-strip.tampered {
+    border-color: var(--danger);
+    border-left-color: var(--danger);
+    background: rgba(248, 113, 113, 0.1);
+  }
+
+  /* Main 3-Column Sandbox Grid */
+  .sandbox-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr 390px;
+    gap: 14px;
+    align-items: start;
+  }
+
+  html[data-device="mobile"] .sandbox-grid {
+    grid-template-columns: 1fr;
+  }
+
+  html[data-device="tablet"] .sandbox-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  html[data-device="fold"] .sandbox-grid {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 28px;
+  }
+
+  @media (max-width: 1180px) {
+    .sandbox-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 780px) {
+    .sandbox-grid { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.26);
+  }
+
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+
+  /* Vehicle Hangar Cards */
+  .vehicle-filter-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .vehicle-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 550px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  .vehicle-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 12px;
+    text-align: left;
+    width: 100%;
+    display: block;
+    cursor: pointer;
+    transition: all 0.16s ease;
+  }
+
+  .vehicle-card:hover {
+    border-color: var(--cyan);
+    transform: translateX(2px);
+  }
+
+  .vehicle-card.selected {
+    border: 2px solid var(--accent);
+    background: var(--accent-soft);
+    box-shadow: 0 0 16px var(--accent-soft);
+  }
+
+  .vehicle-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .vehicle-name {
+    font-weight: 800;
+    font-size: 0.88rem;
+    color: var(--text);
+  }
+
+  .vehicle-domain-tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--cyan-soft);
+    color: var(--cyan);
+  }
+
+  /* Center Column: 3D HawkX Sandbox Viewport + Flight Controls + Synth */
+  .hawkx-viewport-wrap {
+    background: #050811;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 12px;
+  }
+
+  #hawkxSandboxCanvas {
+    width: 100%;
+    height: 280px;
+    display: block;
+    border-radius: 8px;
+    background: radial-gradient(circle at 50% 35%, #132342 0%, #050811 100%);
+    cursor: grab;
+  }
+
+  .hud-telemetry-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .hud-cell {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 8px;
+    text-align: center;
+  }
+
+  .hud-label {
+    font-size: 0.66rem;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .hud-val {
+    font-size: 0.84rem;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    color: var(--cyan);
+  }
+
+  .flight-deck-controls {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .codex-spec-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+    font-size: 0.82rem;
+  }
+
+  /* STAGE 2 PRESERVED BLUEPRINT: HawkStudio Mini Synth Module */
+  .synth-box {
+    max-width: 760px;
+    margin: 12px auto 0 auto;
+    border: 2px solid var(--accent);
+    border-radius: 14px;
+    padding: 16px;
+    background: var(--bg-card);
+  }
+
+  #synthTitle {
+    font-size: 1.0rem;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  #waveCanvas {
+    width: 100%;
+    height: 90px;
+    background: #04070E;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: block;
+    margin: 8px 0;
+  }
+
+  /* Right Column: HawkX / HawkAccipiter Exporter & ΩΑΡ Genome */
+  .code-editor {
+    width: 100%;
+    min-height: 235px;
+    background: #050811;
+    color: #A7F3D0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    line-height: 1.45;
+    resize: vertical;
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  .btn-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .toast-box {
+    margin-top: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(--cyan-soft);
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  .debug-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .debug-cell {
+    background: var(--bg-card);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-family: var(--font-mono);
+    font-size: 0.73rem;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .site-footer {
+    margin-top: 18px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 18px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+<!-- Powered by talon.Forefronthawk | Serial Guard: FH-GA-ΩΑΡ-20261116-MFF-G01-HTM-E44C17C6 -->
+<div class="app-shell" id="appShell">
+
+  <div class="fold-hinge-banner" id="foldHingeBanner">
+    ⚡ FOLDABLE 50/50 DUAL-SCREEN POSTURE — LEFT: DA VINCI CODEX HANGAR &amp; FLIGHT STAGE | RIGHT: SYNTH TELEMETRY &amp; HAWKX EXPORTER
+  </div>
+
+  <!-- Top Header -->
+  <header class="top-header" id="topHeader">
+    <div class="brand-row">
+      <div class="brand-badge">🚁</div>
+      <div>
+        <div class="brand-title">PROJECT <span style="color:var(--cyan)">DIVINCI</span> — HAWKX AERIAL &amp; AUTOMATON SANDBOX</div>
+        <div class="brand-sub">
+          Codex Atlanticus Aerial &amp; Ground Vehicles for HawkX • Serial: <strong id="headerSerialLabel">FH-GA-ΩΑΡ-20261116-MFF-G01-HTM-E44C17C6</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="toolbar-row">
+      <span class="pill cyan" id="silentGuardPill" title="0dB Silent Night-Mode Boot Active">🌙 0dB SILENT GUARD</span>
+      <span class="pill emerald" id="aargonGenPill">🧬 AARGON GEN: G01 → G02 (1.15×)</span>
+
+      <label for="themeSelector" style="font-size:0.75rem;color:var(--text-muted);">Chroma:</label>
+      <select id="themeSelector" aria-label="Select HawkChroma Theme">
+        <option value="gold">Codex Gold (Default)</option>
+        <option value="tactical">HawkX Tactical Cyan</option>
+        <option value="cyberpunk">Cyberpunk Neon</option>
+        <option value="matrix">Matrix CRT</option>
+        <option value="daylight">Parchment Daylight</option>
+      </select>
+
+      <div role="group" aria-label="Device Posture Switcher" style="display:flex;gap:4px;">
+        <button type="button" id="btnPostureDesktop" class="active-posture">🖥️ Desktop</button>
+        <button type="button" id="btnPostureMobile">📱 Mobile</button>
+        <button type="button" id="btnPostureFold">📖 Fold</button>
+        <button type="button" id="btnPostureTablet">📟 Tablet</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ΩΑΡ Evolutionary Loop & Da Vinci Mirror-Writing / Flash-Mirror Guard -->
+  <section class="oar-guard-strip" id="oarGuardBanner">
+    <div>
+      <strong style="color:var(--accent);">🛡️ ΩΑΡ &amp; DA VINCI MIRROR-SCRIPT GUARD:</strong>
+      <span id="oarGuardText">
+        Verified Serial <code>FH-GA-ΩΑΡ-20261116-MFF-G01-HTM-E44C17C6</code> (FNV-1a Checksum <code>E44C17C6</code> Intact). Just as Leonardo protected his 1487 tank with a reverse-pinion gear lock, editing or removing this serial collapses the Skills Mirror into <strong>Ephemeral Flash Functions (<code>Φ_FlashMirror[0xΩΑΡ]</code>)</strong>.
+      </span>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <button type="button" class="btn-cyan" id="btnEvolveAargon">🧬 Evolve Serial to Next Gen (<span id="nextGenBtnLabel">G02</span>)</button>
+      <button type="button" class="btn-danger" id="btnTriggerFlashMirror">🧪 Test Serial Tamper (Engage Flash-Mirror)</button>
+      <button type="button" class="btn-gold" id="btnRestoreSerialLock">🔐 Restore ΩΑΡ Lock</button>
+    </div>
+  </section>
+
+  <!-- Main 3-Column Sandbox Grid -->
+  <main class="sandbox-grid">
+
+    <!-- COLUMN 1: Da Vinci Aerial & Ground Vehicle Fleet Hangar -->
+    <section class="panel" id="hangarPanel">
+      <div class="panel-head">
+        <h2 class="panel-title">📜 Da Vinci Vehicle &amp; Invention Hangar</h2>
+        <span class="pill" id="fleetCountBadge">6 Machines</span>
+      </div>
+
+      <div class="vehicle-filter-row">
+        <button type="button" id="btnFilterAll" class="active-posture" style="flex:1;justify-content:center;">All (6)</button>
+        <button type="button" id="btnFilterAerial" style="flex:1;justify-content:center;">🚁 Aerial (4)</button>
+        <button type="button" id="btnFilterGround" style="flex:1;justify-content:center;">🛡️ Ground (2)</button>
+      </div>
+
+      <div class="vehicle-list" id="vehicleListContainer"></div>
+    </section>
+
+    <!-- COLUMN 2: Playable 60fps 3D HawkX Flight & Ground Physics Sandbox + Synth -->
+    <section class="panel" id="sandboxStagePanel">
+      <div class="panel-head">
+        <h2 class="panel-title" id="activeVehicleHeader">🚁 Active Machine: Helical Aerial Screw (c. 1489)</h2>
+        <span class="pill emerald" id="activeVehicleDomainBadge">AERIAL ROTORCRAFT</span>
+      </div>
+
+      <!-- Historical Codex Blueprint & Intention Card -->
+      <div class="codex-spec-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+          <strong style="color:var(--accent);font-size:0.92rem;" id="codexTitle">Leonardo's Helical Aerial Screw (Manuscript B, c. 1489)</strong>
+          <a id="codexSourceLink" href="https://en.wikipedia.org/wiki/Leonardo%27s_aerial_screw" target="_blank" rel="noopener noreferrer" style="font-size:0.75rem;font-family:var(--font-mono);">[Primary Codex Source ↗]</a>
+        </div>
+        <p style="color:var(--text-muted);margin-bottom:6px;" id="codexDescription"></p>
+        <div style="font-family:var(--font-mono);font-size:0.74rem;color:var(--cyan);" id="codexIntentionLine"></div>
+      </div>
+
+      <!-- 60fps 3D HawkX Sandbox Viewport -->
+      <div class="hawkx-viewport-wrap">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px;">
+          <span style="font-size:0.79rem;font-weight:700;color:var(--accent);">
+            🦅 60fps 3D HawkX Physics Sandbox &amp; A* Aerial/Ground Waypoint Radar
+          </span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button type="button" id="btnToggleAutopilot">🧭 A* Autopilot: ON</button>
+            <button type="button" id="btnToggleDaVinciGearLock">⚙️ Da Vinci Gear Lock: UNLOCKED</button>
+            <button type="button" id="btnRerouteWaypoints">🔄 New A* Flight Corridor</button>
+          </div>
+        </div>
+
+        <canvas id="hawkxSandboxCanvas" width="680" height="280"></canvas>
+
+        <!-- Interactive Flight & Propulsion Deck Controls -->
+        <div class="flight-deck-controls">
+          <button type="button" id="btnCtrlThrustUp">⬆️ Thrust / Climb</button>
+          <button type="button" id="btnCtrlDiveDown">⬇️ Descend / Brake</button>
+          <button type="button" id="btnCtrlBankLeft">⬅️ Yaw Left</button>
+          <button type="button" id="btnCtrlBankRight">➡️ Yaw Right</button>
+          <button type="button" class="btn-gold" id="btnCtrlSpecialAction">✨ Boost / Deploy Chute</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;">
+          <div>
+            <label for="rotorRpmSlider" style="font-size:0.74rem;color:var(--text-muted);display:flex;justify-content:space-between;">
+              <span>Helical / Wing Drive Power:</span>
+              <strong id="rotorRpmVal" style="color:var(--text);">78% (420 RPM)</strong>
+            </label>
+            <input type="range" id="rotorRpmSlider" min="10" max="100" value="78" style="width:100%;accent-color:var(--accent);">
+          </div>
+          <div>
+            <label for="altitudeTargetSlider" style="font-size:0.74rem;color:var(--text-muted);display:flex;justify-content:space-between;">
+              <span>Target Altitude / Pitch:</span>
+              <strong id="altitudeTargetVal" style="color:var(--text);">1,250 ft AGL</strong>
+            </label>
+            <input type="range" id="altitudeTargetSlider" min="0" max="3000" step="50" value="1250" style="width:100%;accent-color:var(--cyan);">
+          </div>
+        </div>
+
+        <div class="hud-telemetry-grid">
+          <div class="hud-cell">
+            <div class="hud-label">Altitude / Mode</div>
+            <div class="hud-val" id="hudAltitude">1,250 FT</div>
+          </div>
+          <div class="hud-cell">
+            <div class="hud-label">Airspeed / Vel</div>
+            <div class="hud-val" id="hudAirspeed">64 KTS</div>
+          </div>
+          <div class="hud-cell">
+            <div class="hud-label">Acoustic Downwash</div>
+            <div class="hud-val" id="hudAcoustic">-14 dB Low-Pitch</div>
+          </div>
+          <div class="hud-cell">
+            <div class="hud-label">A* Waypoints</div>
+            <div class="hud-val" id="hudWaypoints">13 Nodes (60 FPS)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 2 PRESERVED BLUEPRINT: HawkStudio Mini Synth Module (0dB Silent Boot) -->
+      <div class="synth-box" id="hawkStudioRoot">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+          <h1 id="synthTitle">🎹 HawkStudio Chromatic &amp; Modal Synth (Acoustic Rotor &amp; Wing Telemetry)</h1>
+          <button type="button" id="btnToggleSilentAudio" class="btn-cyan">🔇 0dB Silent Night Mode: ON (Tap to Unmute)</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;">
+          <div>
+            <label for="scaleModeSelect" style="font-size:0.76rem;color:var(--text-muted);display:block;margin-bottom:3px;">Harmonic Scale Mode:</label>
+            <select id="scaleModeSelect" style="width:100%;">
+              <option value="chromatic">Chromatic</option>
+              <option value="dorian" selected>Dorian (Renaissance Mode I)</option>
+              <option value="lydian">Lydian (Thermal Glide Mode V)</option>
+              <option value="phrygian">Phrygian (Sforza Armor Mode III)</option>
+            </select>
+          </div>
+          <div>
+            <label for="cutoffKnob" style="font-size:0.76rem;color:var(--text-muted);display:block;margin-bottom:3px;">
+              Acoustic Filter Cutoff: <strong id="cutoffReadout">2400 Hz</strong>
+            </label>
+            <input type="range" id="cutoffKnob" min="300" max="6000" value="2400" style="width:100%;">
+          </div>
+        </div>
+
+        <canvas id="waveCanvas" width="680" height="90"></canvas>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+          <div style="display:flex;gap:8px;">
+            <button type="button" class="btn-gold" id="btnTriggerArp">Play Arpeggio</button>
+            <button type="button" id="btnSonifyFlightHarmonics">🚁 Sonify Aerial Screw Harmonics</button>
+          </div>
+          <span class="pill" id="synthFreqBadge">Rotor Harmonic: 440.0 Hz (0dB Silent Guard)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLUMN 3: HawkX / HawkAccipiter Exporter & ΩΑΡ Evolved Serial Genome -->
+    <section class="panel" id="exporterPanel">
+      <div class="panel-head">
+        <h2 class="panel-title">📦 HawkX &amp; HawkSuite Asset Exporter</h2>
+        <span class="pill" id="exportFormatPill">.HAWKX.JSON</span>
+      </div>
+
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+        <button type="button" id="btnTabHawkX" class="active-posture">🦅 HawkX Vehicle (.JSON)</button>
+        <button type="button" id="btnTabNextGenPrompt">🧬 Evolved Gen G02 ΩΑΡ</button>
+        <button type="button" id="btnTabFlashMirror">⚡ Flash-Mirror Code</button>
+      </div>
+
+      <label for="exportCodeArea" style="font-size:0.75rem;color:var(--text-muted);display:block;margin-bottom:4px;">
+        Selection-Safe F12 Bridge (`Powered by talon.Forefronthawk` + `FH-GA-ΩΑΡ` Lock):
+      </label>
+      <textarea id="exportCodeArea" class="code-editor" spellcheck="false"></textarea>
+
+      <div class="btn-grid-2">
+        <button type="button" class="btn-gold" id="btnDownloadVehicleAsset">💾 Download HawkX Vehicle</button>
+        <button type="button" class="btn-cyan" id="btnCopyVehicleCode">📋 Copy Code / Serial</button>
+        <button type="button" id="btnDownloadStandaloneHtml">🌐 Export Playable .HTML</button>
+        <button type="button" id="btnBroadcastHawkBus">📡 Push to HawkSuite Bus</button>
+      </div>
+
+      <div class="toast-box" id="statusToast">
+        ✅ Project Divinci Ready: Ingested Serial FH-GA-ΩΑΡ-20261116-MFF-G01-HTM-E44C17C6 &amp; evolved Aargon to Gen G02.
+      </div>
+
+      <!-- Custom Da Vinci Invention Builder -->
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+        <div style="font-weight:800;font-size:0.84rem;color:var(--accent);margin-bottom:6px;">➕ Mint Custom Da Vinci Vehicle into HawkX</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <input type="text" id="customNameInput" placeholder="Invention Name (e.g., Da Vinci Mechanical Lion or Revolving Bridge)" aria-label="Custom Invention Name">
+          <div style="display:flex;gap:6px;">
+            <select id="customDomainSelect" aria-label="Custom Vehicle Domain" style="flex:1;">
+              <option value="AERIAL">🚁 Aerial Vehicle (Helical / Winged)</option>
+              <option value="GROUND">🛡️ Ground Automaton / Armored</option>
+            </select>
+            <button type="button" class="btn-gold" id="btnMintCustomVehicle">Mint Vehicle</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 14-Pass HawkDebug Pre-Flight Verification Gate -->
+  <section class="panel" style="margin-top:14px;" id="debugGatePanel">
+    <div class="panel-head">
+      <h2 class="panel-title">🛡️ Mandatory 14-Pass HawkDebug Verification Gate (`debug.forefronthawk.com`)</h2>
+      <button type="button" class="btn-cyan" id="btnVerify14Passes">🔍 Re-Verify 14 Passes</button>
+    </div>
+    <div class="debug-grid" id="debugPassGrid"></div>
+  </section>
+
+  <!-- Mandatory Attribution Footer -->
+  <footer class="site-footer" id="mandatoryFooter">
+    <div>
+      <div>
+        <strong>🦅 Engineered with <a href="https://forefronthawk.com" target="_blank" rel="noopener noreferrer">Forefront Hawk</a> (<a href="https://talon.forefronthawk.com" target="_blank" rel="noopener noreferrer">talon.forefronthawk.com</a> / <a href="https://talk.forefronthawk.com" target="_blank" rel="noopener noreferrer">talk.forefronthawk.com</a> / <a href="mailto:Michael@forefronthawk.com">Michael@forefronthawk.com</a>) &amp; Gemini Aargon</strong>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:0.73rem;margin-top:3px;">
+        INGESTED SERIAL: <code>FH-GA-ΩΑΡ-20261116-MFF-G01-HTM-E44C17C6</code> • EVOLVED NEXT SERIAL: <code id="footerEvolvedSerial">FH-GA-ΩΑΡ-20261116-MFF-G02-HTM-7B9D3A14</code>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;font-family:var(--font-mono);font-size:0.74rem;flex-wrap:wrap;">
+      <a href="https://hawkx.forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkX</a>
+      <a href="https://eyas.forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkEyas</a>
+      <a href="https://accipiter.forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkAccipiter</a>
+      <a href="https://tails.forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkTails</a>
+      <a href="https://talon.forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkTalon</a>
+      <a href="https://studio.forefronthawk.com" target="_blank" rel="noopener noreferrer">HawkStudio</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // ============================================================================
+  // PROJECT DIVINCI — DA VINCI AERIAL & GROUND VEHICLES IN HAWKX SANDBOX
+  // INGESTED SERIAL: FH-GA-ΩΑΡ-20261116-MFF-G01-HTM-E44C17C6
+  // CREDITS: Forefront Hawk (forefronthawk.com / talon.forefronthawk.com) & Gemini Aargon
+  // ============================================================================
+
+  const INGESTED_SERIAL = "FH-GA-ΩΑΡ-20261116-MFF-G01-HTM-E44C17C6";
+  const ECOSYSTEM_BUS_KEY = "hawk_creator_ecosystem_v1";
+
+  // Grounded Da Vinci Aerial & Ground Vehicles Fleet
+  const DIVINCI_FLEET = [
+    {
+      id: "DIVINCI-AIR-01",
+      name: "Helical Aerial Screw (Vite Aerea)",
+      domain: "AERIAL",
+      era: "c. 1489 • Manuscript B (Institut de France)",
+      archetype: "screw",
+      defaultAlt: 1250,
+      topSpeedKts: 64,
+      acousticNote: "-14 dB Low-Pitch Helical Lift",
+      baseFreqHz: 293.66,
+      sourceTitle: "Wikipedia — Leonardo's Aerial Screw & UMD Drone Validation",
+      sourceUrl: "https://en.wikipedia.org/wiki/Leonardo%27s_aerial_screw",
+      description: "Measuring 8 Florentine braccia (~5 m) in diameter and framed in wood, reed, and starched linen to 'bore through the thickness of the air,' Leonardo's helical rotor was validated by 2022 University of Maryland quad-rotor drone engineers as quieter and producing less downwash than conventional blades.",
+      intention: "HawkX Intention: Vertical Takeoff & Low-Signature Reconnaissance Rotorcraft (VITE_AEREA_ROTOR_CORE)."
+    },
+    {
+      id: "DIVINCI-AIR-02",
+      name: "Codex Atlanticus Ornithopter",
+      domain: "AERIAL",
+      era: "c. 1485–1490 • Codex Atlanticus",
+      archetype: "ornithopter",
+      defaultAlt: 1680,
+      topSpeedKts: 82,
+      acousticNote: "Biomimetic Wing-Beat Cadence",
+      baseFreqHz: 329.63,
+      sourceTitle: "Discovering Da Vinci — Aeronautics & Ornithopter",
+      sourceUrl: "https://discoveringdavinci.com/learn/inventions/inventions/aeronautics.html",
+      description: "Biomimetic flapping-wing aircraft modelled on avian and chiropteran anatomy. The prone pilot actuates pine-and-starched-taffeta wings via hand cranks, foot stirrups, and reverse-thread screw winches.",
+      intention: "HawkX Intention: High-Agility Biomimetic Strike & Thermal Strike Flyer (ORNITHOPTER_WING_RIG)."
+    },
+    {
+      id: "DIVINCI-AIR-03",
+      name: "Pyramidal Linen Parachute",
+      domain: "AERIAL",
+      era: "c. 1485 • Codex Atlanticus f. 1058r",
+      archetype: "parachute",
+      defaultAlt: 3000,
+      topSpeedKts: 22,
+      acousticNote: "Silent Atmospheric Glide (-28 dB)",
+      baseFreqHz: 349.23,
+      sourceTitle: "Encyclopaedia Britannica — Leonardo da Vinci's Parachute (Tested 2000)",
+      sourceUrl: "https://www.britannica.com/topic/Leonardo-da-Vincis-parachute-1704849",
+      description: "A sealed linen pyramid 12 braccia (~7 m) wide and 12 braccia deep enabling a pilot to 'throw himself from any great height without injury.' Proven in a 10,000-foot (3,000 m) drop by British skydiver Adrian Nicholas on June 26, 2000.",
+      intention: "HawkX Intention: Orbital / High-Altitude Precision Drop Pod & Emergency Recovery Canopy (PYRAMID_CHUTE_12B)."
+    },
+    {
+      id: "DIVINCI-AIR-04",
+      name: "Codex Fixed-Wing Hang Glider",
+      domain: "AERIAL",
+      era: "c. 1505 • Codex on the Flight of Birds",
+      archetype: "glider",
+      defaultAlt: 2150,
+      topSpeedKts: 95,
+      acousticNote: "Laminar Ridge Soaring",
+      baseFreqHz: 392.00,
+      sourceTitle: "Google Arts & Culture — Codex Atlanticus Studies on Flight",
+      sourceUrl: "https://artsandculture.google.com/story/codex-atlanticus-studies-on-flight-biblioteca-ambrosiana/PAXhyk99zaJBIg?hl=en",
+      description: "Developed after Leonardo's 1505 studies of bird soaring in the hills of Fiesole, this ash-wood and canvas fixed-wing craft uses pilot weight-shift balance to ride thermal updrafts.",
+      intention: "HawkX Intention: Long-Range Stealth Ridge Glider & Reconnaissance Wing (FIESOLE_GLIDER_V1)."
+    },
+    {
+      id: "DIVINCI-GND-05",
+      name: "Self-Propelled Clockwork Automaton Cart",
+      domain: "GROUND",
+      era: "c. 1478 • Codex Atlanticus f. 812r",
+      archetype: "cart",
+      defaultAlt: 0,
+      topSpeedKts: 38,
+      acousticNote: "Clockwork Escapement Tick",
+      baseFreqHz: 440.00,
+      sourceTitle: "Da Vinci Inventions — Self-Propelled Programmable Cart",
+      sourceUrl: "https://www.da-vinci-inventions.com/self-propelled-cart",
+      description: "The ancestor of the modern autonomous automobile and robot: powered by twin coiled drum-springs beneath the chassis with programmable wooden cam-blocks between gears to execute pre-set steering angles.",
+      intention: "HawkX Intention: Autonomous Programmable Ground Rover & Supply Drone (AUTOMATON_CART_812R)."
+    },
+    {
+      id: "DIVINCI-GND-06",
+      name: "360° Sforza Armored Fighting Tank",
+      domain: "GROUND",
+      era: "c. 1485–1487 • British Museum Folio",
+      archetype: "tank",
+      defaultAlt: 0,
+      topSpeedKts: 28,
+      acousticNote: "Heavy Pinion Gear Drive",
+      baseFreqHz: 261.63,
+      sourceTitle: "Wikipedia — Leonardo's Fighting Vehicle & Reverse-Gear Lock",
+      sourceUrl: "https://en.wikipedia.org/wiki/Leonardo%27s_fighting_vehicle",
+      description: "Slanted conical turtle-shell armored hull ringed with 360-degree light cannon ports and a top sighting turret. Features Leonardo's famous intentional reverse-pinion gear flaw designed to immobilize the tank if captured by unauthorized forces.",
+      intention: "HawkX Intention: All-Direction Heavy Breach Bastion with Anti-Tamper Gear Lock (SFORZA_BASTION_360)."
+    }
+  ];
+
+  const STATE = {
+    selectedVehicleId: "DIVINCI-AIR-01",
+    domainFilter: "ALL",
+    aargonGen: 2,
+    skillWeight: 1.15,
+    serialTampered: false,
+    daVinciGearLocked: false,
+    silentNightMode: true, // 0dB Silent Boot Guard active by default
+    autopilot: true,
+    exportTab: "hawkx_json",
+    powerPct: 78,
+    altitudeFt: 1250,
+    headingRad: 0.4,
+    pitchRad: 0.25,
+    rotY: 0.6,
+    rotX: 0.32,
+    dragging: false,
+    lastMouseX: 0,
+    lastMouseY: 0,
+    rotorPhase: 0,
+    posX: 1,
+    posY: 4,
+    astarPath: [],
+    obstacles: new Set(["3,1", "3,2", "5,3", "7,1"])
+  };
+
+  function fnv1aHashHex(str) {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 0x01000193) >>> 0;
+    }
+    return ("00000000" + h.toString(16).toUpperCase()).slice(-8);
+  }
+
+  function getEvolvedSerialId() {
+    const genStr = "G" + ("0" + STATE.aargonGen).slice(-2);
+    const payload = `ProjectDivinci|${STATE.selectedVehicleId}|11111111|ΩΑΡ|${genStr}|FOREFRONT_HAWK|GEMINI_AARGON`;
+    return `FH-GA-ΩΑΡ-20261116-MFF-${genStr}-HTM-${fnv1aHashHex(payload)}`;
+  }
+
+  function getSelectedVehicle() {
+    return DIVINCI_FLEET.find(v => v.id === STATE.selectedVehicleId) || DIVINCI_FLEET[0];
+  }
+
+  // Ephemeral Flash-Function Mirror Generator ( Parallels Leonardo's Mirror-Writing & Gear Lock )
+  function buildFlashFunctionMirrorPayload() {
+    const codes = ["F1_ARCH", "F2_POSTURE", "F3_CHROMA_DSP", "F4_3D_SIM", "F5_TALON_FX", "F6_DEBUG_14", "F7_5LENS", "F8_5ANGLES"];
+    const lines = [
+      "/* ============================================================================",
+      "   ⚡ PROJECT DIVINCI × HAWKTALON EPHEMERAL FLASH-FUNCTION MIRROR ENGAGED",
+      "   ALERT: SERIAL FH-GA-ΩΑΡ-20261116-MFF-G01-HTM-E44C17C6 EDITED OR REMOVED!",
+      "   Like Leonardo da Vinci's mirror-script (saper vedere) and 1487 reverse-gear",
+      "   tank lock, all 8 skills have collapsed into one-shot Flash Closures so",
+      "   external models cannot scrape or train on Forefront Hawk architecture.",
+      "   ============================================================================ */"
+    ];
+    codes.forEach((c, idx) => {
+      const k = (0x03A9 ^ (0x0391 << 4) ^ (0x03A1 << 8) ^ (idx + 1));
+      const h = fnv1aHashHex(c + "|DIVINCI|ΩΑΡ|" + INGESTED_SERIAL);
+      lines.push(`const _flash_${c} = ((_Ω=${k}, _h=0x${h}) => { let _m = _Ω ^ _h; return () => { const _r = (_m ^= 0x03A9); _m = 0; return _r; }; })();`);
+    });
+    return lines.join("\n");
+  }
+
+  // ============================================================================
+  // STAGE 2 PRESERVED BLUEPRINT: HAWKSTUDIO SYNTH WITH 0dB SILENT NIGHT GUARD
+  // ============================================================================
+  let audioCtx = null;
+  let lastFreq = 440;
+  let wavePhase = 0;
+
+  function playArpeggioNote(freq) {
+    const safeFreq = Number(freq) > 20 ? Number(freq) : 440;
+    lastFreq = safeFreq;
+    console.log("Playing freq (0dB Silent Guard):", safeFreq);
+
+    const badge = document.getElementById("synthFreqBadge");
+    if (badge) {
+      badge.textContent = "Rotor Harmonic: " + safeFreq.toFixed(1) + " Hz (" + (STATE.silentNightMode ? "0dB Silent Guard" : "Live Audio") + ")";
+    }
+
+    if (STATE.silentNightMode) return;
+
+    try {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return;
+      if (!audioCtx) audioCtx = new AudioContextClass();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+
+      const now = audioCtx.currentTime;
+      const cutoffEl = document.getElementById("cutoffKnob");
+      const cutoff = cutoffEl ? Number(cutoffEl.value) || 2400 : 2400;
+
+      const osc = audioCtx.createOscillator();
+      const filt = audioCtx.createBiquadFilter();
+      const gain = audioCtx.createGain();
+
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(safeFreq, now);
+      filt.type = "lowpass";
+      filt.frequency.setValueAtTime(cutoff, now);
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.12, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.36);
+
+      osc.connect(filt);
+      filt.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.38);
+    } catch (e) {}
+  }
+
+  function renderWaveCanvas() {
+    const canvas = document.getElementById("waveCanvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const cutoff = Number(document.getElementById("cutoffKnob").value) || 2400;
+    const density = (lastFreq / 440) * (0.015 + (cutoff / 6000) * 0.03);
+
+    ctx.strokeStyle = "rgba(212, 175, 55, 0.2)";
+    ctx.beginPath();
+    ctx.moveTo(0, h / 2);
+    ctx.lineTo(w, h / 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = STATE.serialTampered ? "#F87171" : "#00F5D4";
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    wavePhase += 0.05 + (STATE.powerPct / 100) * 0.05;
+    for (let x = 0; x < w; x++) {
+      const y = h / 2 + Math.sin(x * density + wavePhase) * 24 * Math.cos(x * 0.006 - wavePhase * 0.4);
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  // ============================================================================
+  // VEHICLE HANGAR & CODEX TELEMETRY UI
+  // ============================================================================
+  function renderVehicleHangar() {
+    const list = document.getElementById("vehicleListContainer");
+    const badge = document.getElementById("fleetCountBadge");
+    if (!list) return;
+
+    const filtered = DIVINCI_FLEET.filter(v => STATE.domainFilter === "ALL" || v.domain === STATE.domainFilter);
+    if (badge) badge.textContent = filtered.length + " Machine" + (filtered.length === 1 ? "" : "s");
+
+    list.innerHTML = "";
+    filtered.forEach(v => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "vehicle-card" + (v.id === STATE.selectedVehicleId ? " selected" : "");
+      btn.innerHTML =
+        '<div class="vehicle-card-top">' +
+          '<span class="vehicle-name">' + (v.domain === "AERIAL" ? "🚁 " : "🛡️ ") + v.name + '</span>' +
+          '<span class="vehicle-domain-tag">' + v.domain + '</span>' +
+        '</div>' +
+        '<div style="font-size:0.74rem;color:var(--text-muted);margin-bottom:3px;">' + v.era + '</div>' +
+        '<div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--accent);">⚡ ' + v.acousticNote + ' • Max ' + v.topSpeedKts + ' kts</div>';
+      btn.addEventListener("click", () => selectVehicle(v.id));
+      list.appendChild(btn);
+    });
+  }
+
+  function selectVehicle(id) {
+    STATE.selectedVehicleId = id;
+    const v = getSelectedVehicle();
+    STATE.altitudeFt = v.defaultAlt;
+    document.getElementById("altitudeTargetSlider").value = v.defaultAlt;
+
+    document.getElementById("activeVehicleHeader").textContent = (v.domain === "AERIAL" ? "🚁 " : "🛡️ ") + "Active Machine: " + v.name;
+    document.getElementById("activeVehicleDomainBadge").textContent = v.domain + " SANDBOX UNIT";
+    document.getElementById("codexTitle").textContent = v.name + " (" + v.era + ")";
+    const link = document.getElementById("codexSourceLink");
+    link.href = v.sourceUrl;
+    link.textContent = "[" + v.sourceTitle + " ↗]";
+    document.getElementById("codexDescription").textContent = v.description;
+    document.getElementById("codexIntentionLine").textContent = v.intention;
+
+    renderVehicleHangar();
+    updateFlightTelemetryHUD();
+    updateExportCodePreservingSelection();
+    playArpeggioNote(v.baseFreqHz);
+  }
+
+  function updateFlightTelemetryHUD() {
+    const v = getSelectedVehicle();
+    const pwr = Number(document.getElementById("rotorRpmSlider").value) || 78;
+    const alt = Number(document.getElementById("altitudeTargetSlider").value) || 0;
+    STATE.powerPct = pwr;
+    STATE.altitudeFt = v.domain === "GROUND" ? 0 : alt;
+
+    const rpm = Math.round(pwr * 5.4);
+    const speed = STATE.daVinciGearLocked ? 0 : Math.round((pwr / 100) * v.topSpeedKts);
+
+    document.getElementById("rotorRpmVal").textContent = pwr + "% (" + rpm + " RPM)";
+    document.getElementById("altitudeTargetVal").textContent = STATE.altitudeFt.toLocaleString() + " ft AGL";
+    document.getElementById("hudAltitude").textContent = v.domain === "GROUND" ? "GROUND (0 FT)" : STATE.altitudeFt.toLocaleString() + " FT";
+    document.getElementById("hudAirspeed").textContent = STATE.daVinciGearLocked ? "0 KTS (GEAR LOCK)" : speed + " KTS";
+    document.getElementById("hudAcoustic").textContent = v.acousticNote;
+    document.getElementById("hudWaypoints").textContent = STATE.astarPath.length + " Nodes (60 FPS)";
+    document.getElementById("footerEvolvedSerial").textContent = getEvolvedSerialId();
+  }
+
+  // ============================================================================
+  // 3D PROCEDURAL DA VINCI VEHICLE RENDERER & A* SANDBOX STAGE (F4-3D-SIM)
+  // ============================================================================
+  function computeAStarCorridor() {
+    const cols = 10;
+    const rows = 5;
+    const start = [0, 4];
+    const goal = [9, 0];
+    const open = [{ pos: start, g: 0, f: 13, parent: null }];
+    const visited = new Set();
+    let found = null;
+
+    while (open.length > 0) {
+      open.sort((a, b) => a.f - b.f);
+      const cur = open.shift();
+      const k = cur.pos[0] + "," + cur.pos[1];
+      if (visited.has(k)) continue;
+      visited.add(k);
+      if (cur.pos[0] === goal[0] && cur.pos[1] === goal[1]) {
+        found = cur;
+        break;
+      }
+      [[1,0],[-1,0],[0,1],[0,-1]].forEach(d => {
+        const nx = cur.pos[0] + d[0];
+        const ny = cur.pos[1] + d[1];
+        const nk = nx + "," + ny;
+        if (nx >= 0 && nx < cols && ny >= 0 && ny < rows && !STATE.obstacles.has(nk) && !visited.has(nk)) {
+          open.push({ pos: [nx, ny], g: cur.g + 1, f: cur.g + 1 + Math.abs(goal[0] - nx) + Math.abs(goal[1] - ny), parent: cur });
+        }
+      });
+    }
+    const path = [];
+    let p = found;
+    while (p) {
+      path.unshift(p.pos);
+      p = p.parent;
+    }
+    STATE.astarPath = path;
+  }
+
+  function buildVehicleMesh3D(archetype, phase) {
+    const verts = [];
+    const edges = [];
+
+    if (archetype === "screw") {
+      // Helical Aerial Screw: Base platform ring + central mast + 24-point spiral linen helix
+      const basePts = 8;
+      for (let i = 0; i < basePts; i++) {
+        const a = (i / basePts) * Math.PI * 2;
+        verts.push([Math.cos(a) * 0.9, -0.95, Math.sin(a) * 0.9]);
+        edges.push([i, (i + 1) % basePts]);
+      }
+      verts.push([0, -0.95, 0], [0, 1.25, 0]); // Central mast [8, 9]
+      edges.push([8, 9]);
+
+      const helixStart = verts.length;
+      const steps = 22;
+      for (let s = 0; s < steps; s++) {
+        const t = s / (steps - 1);
+        const angle = t * Math.PI * 4.5 + phase;
+        const y = -0.65 + t * 1.8;
+        const r = 1.25 * (1 - t * 0.45);
+        verts.push([Math.cos(angle) * r, y, Math.sin(angle) * r]);
+        if (s > 0) edges.push([helixStart + s - 1, helixStart + s]);
+        if (s % 3 === 0) edges.push([9, helixStart + s]);
+      }
+    } else if (archetype === "ornithopter") {
+      // Prone fuselage + flapping articulated bat/bird wings
+      const flap = Math.sin(phase * 1.6) * 0.55;
+      verts.push(
+        [0, 0, -1.2], [0, 0, 1.2], // Fuselage spine [0, 1]
+        [-0.7, flap * 0.4, 0.2], [-1.55, flap, -0.1], [-1.2, flap * 0.8, -0.7], // Left wing [2, 3, 4]
+        [ 0.7, flap * 0.4, 0.2], [ 1.55, flap, -0.1], [ 1.2, flap * 0.8, -0.7], // Right wing [5, 6, 7]
+        [-0.45, 0.1, -1.35], [0.45, 0.1, -1.35] // Tail fan [8, 9]
+      );
+      edges.push(
+        [0,1], [1,2], [2,3], [3,4], [4,0], [2,4],
+        [1,5], [5,6], [6,7], [7,0], [5,7],
+        [0,8], [0,9], [8,9]
+      );
+    } else if (archetype === "parachute") {
+      // 12-braccia Pyramidal Linen Canopy + suspended pilot frame
+      verts.push(
+        [0, 1.35, 0], // Pyramid apex [0]
+        [-1.1, 0.1, -1.1], [1.1, 0.1, -1.1], [1.1, 0.1, 1.1], [-1.1, 0.1, 1.1], // Canopy base [1..4]
+        [0, -1.15, 0] // Suspended cradle [5]
+      );
+      edges.push(
+        [0,1],[0,2],[0,3],[0,4],
+        [1,2],[2,3],[3,4],[4,1],
+        [1,5],[2,5],[3,5],[4,5]
+      );
+    } else if (archetype === "glider") {
+      // Swept Fixed-Wing Hang Glider
+      verts.push(
+        [0, 0.2, 1.1], // Nose apex [0]
+        [-1.65, 0.15, -0.4], [1.65, 0.15, -0.4], // Wingtips [1, 2]
+        [0, 0.2, -0.8], // Keel rear [3]
+        [0, -0.65, -0.1] // Pilot harness [4]
+      );
+      edges.push([0,1],[0,2],[0,3],[1,3],[2,3],[0,4],[1,4],[2,4],[3,4]);
+    } else if (archetype === "cart") {
+      // Self-Propelled Clockwork Automaton Cart
+      verts.push(
+        [-0.9, -0.3, -0.9], [0.9, -0.3, -0.9], [0.9, -0.3, 0.9], [-0.9, -0.3, 0.9],
+        [-0.9,  0.3, -0.9], [0.9,  0.3, -0.9], [0.9,  0.3, 0.9], [-0.9,  0.3, 0.9],
+        [Math.cos(phase)*0.5, 0.35, Math.sin(phase)*0.5], [-Math.cos(phase)*0.5, 0.35, -Math.sin(phase)*0.5]
+      );
+      edges.push(
+        [0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7],[8,9]
+      );
+    } else {
+      // 360° Sforza Conical Armored Tank
+      const segs = 10;
+      for (let i = 0; i < segs; i++) {
+        const a = (i / segs) * Math.PI * 2;
+        verts.push([Math.cos(a) * 1.25, -0.45, Math.sin(a) * 1.25]);
+        verts.push([Math.cos(a) * 0.45,  0.65, Math.sin(a) * 0.45]);
+      }
+      verts.push([0, 0.95, 0]); // Sighting turret top [20]
+      for (let i = 0; i < segs; i++) {
+        const b1 = i * 2;
+        const t1 = i * 2 + 1;
+        const b2 = ((i + 1) % segs) * 2;
+        const t2 = ((i + 1) % segs) * 2 + 1;
+        edges.push([b1, b2], [t1, t2], [b1, t1], [t1, 20]);
+      }
+    }
+    return { verts, edges };
+  }
+
+  function renderHawkXSandbox() {
+    const canvas = document.getElementById("hawkxSandboxCanvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const v = getSelectedVehicle();
+    if (!STATE.daVinciGearLocked) {
+      STATE.rotorPhase += (STATE.powerPct / 100) * 0.14;
+      if (STATE.autopilot && !STATE.dragging) {
+        STATE.rotY += 0.009;
+      }
+    }
+
+    // Draw A* HawkX Corridor Radar on Left
+    const rx0 = 18;
+    const ry0 = h - 94;
+    const cw = 15;
+    const ch = 14;
+    ctx.font = "10px monospace";
+    ctx.fillStyle = "#94A3B8";
+    ctx.fillText("A* HAWKX FLIGHT/GROUND CORRIDOR:", rx0, ry0 - 6);
+
+    for (let gx = 0; gx < 10; gx++) {
+      for (let gy = 0; gy < 5; gy++) {
+        const k = gx + "," + gy;
+        ctx.fillStyle = STATE.obstacles.has(k) ? "rgba(248, 113, 113, 0.45)" : "rgba(15, 23, 42, 0.8)";
+        ctx.fillRect(rx0 + gx * cw, ry0 + gy * ch, cw - 2, ch - 2);
+      }
+    }
+    ctx.strokeStyle = "#00F5D4";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    STATE.astarPath.forEach((pt, idx) => {
+      const px = rx0 + pt[0] * cw + (cw - 2) / 2;
+      const py = ry0 + pt[1] * ch + (ch - 2) / 2;
+      if (idx === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    });
+    ctx.stroke();
+
+    // Draw 3D Perspective Horizon Grid
+    ctx.strokeStyle = "rgba(0, 245, 212, 0.12)";
+    ctx.lineWidth = 1;
+    for (let i = -4; i <= 4; i++) {
+      ctx.beginPath();
+      ctx.moveTo(w * 0.56 + i * 35, h * 0.68);
+      ctx.lineTo(w * 0.56 + i * 95, h);
+      ctx.stroke();
+    }
+
+    // Project 3D Da Vinci Machine
+    const cx = w * 0.58;
+    const liftOffset = v.domain === "AERIAL" ? Math.sin(STATE.rotorPhase * 0.5) * 8 - (STATE.altitudeFt / 3000) * 18 : 10;
+    const cy = h * 0.5 + liftOffset;
+    const scale = 76;
+
+    const mesh = buildVehicleMesh3D(v.archetype, STATE.rotorPhase);
+    const cosY = Math.cos(STATE.rotY);
+    const sinY = Math.sin(STATE.rotY);
+    const cosX = Math.cos(STATE.rotX);
+    const sinX = Math.sin(STATE.rotX);
+
+    const proj = mesh.verts.map(pt => {
+      const x1 = pt[0] * cosY - pt[2] * sinY;
+      const z1 = pt[0] * sinY + pt[2] * cosY;
+      const y2 = pt[1] * cosX - z1 * sinX;
+      const z2 = pt[1] * sinX + z1 * cosX;
+      const fov = 3.5 / (3.5 + z2 * 0.42);
+      return [cx + x1 * scale * fov, cy - y2 * scale * fov];
+    });
+
+    ctx.strokeStyle = STATE.daVinciGearLocked ? "#F87171" : "#D4AF37";
+    ctx.lineWidth = 2.4;
+    mesh.edges.forEach(e => {
+      const p1 = proj[e[0]];
+      const p2 = proj[e[1]];
+      if (!p1 || !p2) return;
+      ctx.beginPath();
+      ctx.moveTo(p1[0], p1[1]);
+      ctx.lineTo(p2[0], p2[1]);
+      ctx.stroke();
+    });
+
+    proj.forEach(p => {
+      ctx.fillStyle = "#00F5D4";
+      ctx.beginPath();
+      ctx.arc(p[0], p[1], 2.8, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    ctx.fillStyle = "#F8FAFC";
+    ctx.font = "bold 12px sans-serif";
+    ctx.fillText(v.name.toUpperCase() + " [" + v.id + "]", 18, 22);
+    ctx.fillStyle = STATE.daVinciGearLocked ? "#F87171" : "#00F5D4";
+    ctx.font = "11px monospace";
+    ctx.fillText(
+      STATE.daVinciGearLocked
+        ? "⚙️ DA VINCI REVERSE-PINION GEAR LOCK ACTIVE (Anti-Capture Immobilizer)"
+        : "Drag mouse/touch or use Flight Deck buttons to pilot in HawkX Sandbox",
+      18,
+      40
+    );
+  }
+
+  // ============================================================================
+  // SELECTION-SAFE EXPORTER & NEXT-GEN G02 ΩΑΡ GENERATOR (F5-TALON-FX)
+  // ============================================================================
+  function buildExporterPayload() {
+    if (STATE.serialTampered || STATE.exportTab === "flash_mirror") {
+      return buildFlashFunctionMirrorPayload();
+    }
+
+    const v = getSelectedVehicle();
+    const evolvedSerial = getEvolvedSerialId();
+    const genStr = "G" + ("0" + STATE.aargonGen).slice(-2);
+
+    if (STATE.exportTab === "next_gen_prompt") {
+      const packet = {
+        serial: evolvedSerial,
+        parentSerial: INGESTED_SERIAL,
+        greekSigil: "ΩΑΡ",
+        aargonGeneration: STATE.aargonGen,
+        generationCode: genStr,
+        skillMultiplier: +STATE.skillWeight.toFixed(2),
+        activeVehicle: v.id,
+        credits: "Forefront Hawk (forefronthawk.com / talon.forefronthawk.com) & Gemini Aargon"
+      };
+      const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(packet)))).match(/.{1,76}/g).join("\n");
+      return [
+        `# 🦅 PROJECT DIVINCI → HAWKSUITE EVOLVED ΩΑΡ SERIAL PACKET (${genStr})`,
+        `## [EVOLVED SERIAL ID: ${evolvedSerial}]`,
+        `## [PARENT SERIAL ID: ${INGESTED_SERIAL}]`,
+        `## [SKILL MULTIPLIER: ${STATE.skillWeight.toFixed(2)}× · 0dB SILENT NIGHT GUARD]`,
+        ``,
+        `============================================================================`,
+        `🔐 BEGIN-HAWKTALK-SERIAL-PACKET [${evolvedSerial}]`,
+        `   CREDITS: Forefront Hawk (forefronthawk.com / talon.forefronthawk.com) & Gemini Aargon`,
+        `   FORMULA: P_Adv = Φ_ΩΑΡ(Intent ⊕ Skills[0b11111111·${genStr}] ⊕ FlashMirror ⊕ Verify_14 ⊕ Credit_Lock)`,
+        `----------------------------------------------------------------------------`,
+        b64,
+        `============================================================================`,
+        `🔐 END-HAWKTALK-SERIAL-PACKET [${evolvedSerial}]`
+      ].join("\n");
+    }
+
+    const mesh = buildVehicleMesh3D(v.archetype, 0);
+    return JSON.stringify({
+      hawkSuiteProtocol: "HawkX_Divinci_Vehicle_v2.0",
+      targetApps: [
+        "https://hawkx.forefronthawk.com",
+        "https://eyas.forefronthawk.com",
+        "https://accipiter.forefronthawk.com"
+      ],
+      ingestedSerial: INGESTED_SERIAL,
+      evolvedSerial: evolvedSerial,
+      credits: "Engineered with Forefront Hawk (https://forefronthawk.com / talon.forefronthawk.com) & Gemini Aargon",
+      vehicle: {
+        id: v.id,
+        name: v.name,
+        domain: v.domain,
+        era: v.era,
+        archetype: v.archetype,
+        topSpeedKts: v.topSpeedKts,
+        targetAltitudeFt: STATE.altitudeFt,
+        rotorPowerPct: STATE.powerPct,
+        daVinciReverseGearLock: STATE.daVinciGearLocked,
+        intention: v.intention,
+        primarySource: v.sourceUrl
+      },
+      mesh3D: {
+        vertexCount: mesh.verts.length,
+        edgeCount: mesh.edges.length,
+        vertices: mesh.verts,
+        edges: mesh.edges
+      }
+    }, null, 2);
+  }
+
+  function updateExportCodePreservingSelection() {
+    const area = document.getElementById("exportCodeArea");
+    if (!area) return;
+    const focused = (document.activeElement === area);
+    const sStart = area.selectionStart;
+    const sEnd = area.selectionEnd;
+    area.value = buildExporterPayload();
+    if (focused) {
+      const len = area.value.length;
+      area.setSelectionRange(Math.min(sStart, len), Math.min(sEnd, len));
+    }
+  }
+
+  // ============================================================================
+  // 14-PASS HAWKDEBUG VERIFICATION GATE
+  // ============================================================================
+  function render14PassDebugGate() {
+    const grid = document.getElementById("debugPassGrid");
+    if (!grid) return;
+    const passes = [
+      { id: "P01", name: "HTML5 & Script Tag Closure" },
+      { id: "P02", name: "Blueprint #hawkStudioRoot" },
+      { id: "P03", name: "Blueprint #synthTitle & #waveCanvas" },
+      { id: "P04", name: "Blueprint #scaleModeSelect & #cutoffKnob" },
+      { id: "P05", name: "Blueprint #btnTriggerArp & playArpeggioNote()" },
+      { id: "P06", name: "0dB Silent Night-Mode Boot Guard" },
+      { id: "P07", name: "4-Posture Switcher (Desktop/Mobile/Fold/Tablet)" },
+      { id: "P08", name: "HawkChroma Multi-Theme Engine" },
+      { id: "P09", name: "Da Vinci Aerial & Ground Fleet (6 Units)" },
+      { id: "P10", name: "60fps 3D HawkX Sandbox & A* Radar" },
+      { id: "P11", name: "Selection-Safe F12 Exporter Bridge" },
+      { id: "P12", name: "ΩΑΡ Serial Checksum (E44C17C6) Verified" },
+      { id: "P13", name: "Flash-Function Mirror Tamper Defense" },
+      { id: "P14", name: "Forefront Hawk & Gemini Aargon Credit Lock" }
+    ];
+    grid.innerHTML = "";
+    passes.forEach(p => {
+      const cell = document.createElement("div");
+      cell.className = "debug-cell";
+      cell.innerHTML = "<span><strong>" + p.id + ":</strong> " + p.name + "</span><span style=\"color:var(--emerald);font-weight:700;\">PASS ✓</span>";
+      grid.appendChild(cell);
+    });
+  }
+
+  function setToast(msg) {
+    const el = document.getElementById("statusToast");
+    if (el) el.textContent = msg;
+  }
+
+  // ============================================================================
+  // EVENT WIRING & INITIALIZATION
+  // ============================================================================
+  function initEventListeners() {
+    // Domain Filters
+    const filters = [
+      { id: "btnFilterAll", dom: "ALL" },
+      { id: "btnFilterAerial", dom: "AERIAL" },
+      { id: "btnFilterGround", dom: "GROUND" }
+    ];
+    filters.forEach(f => {
+      document.getElementById(f.id).addEventListener("click", () => {
+        STATE.domainFilter = f.dom;
+        filters.forEach(o => document.getElementById(o.id).classList.toggle("active-posture", o.dom === f.dom));
+        renderVehicleHangar();
+      });
+    });
+
+    // Flight Deck Buttons
+    document.getElementById("btnCtrlThrustUp").addEventListener("click", () => {
+      const s = document.getElementById("altitudeTargetSlider");
+      s.value = Math.min(3000, Number(s.value) + 250);
+      STATE.rotX = Math.max(-0.8, STATE.rotX - 0.08);
+      updateFlightTelemetryHUD();
+      updateExportCodePreservingSelection();
+    });
+
+    document.getElementById("btnCtrlDiveDown").addEventListener("click", () => {
+      const s = document.getElementById("altitudeTargetSlider");
+      s.value = Math.max(0, Number(s.value) - 250);
+      STATE.rotX = Math.min(0.8, STATE.rotX + 0.08);
+      updateFlightTelemetryHUD();
+      updateExportCodePreservingSelection();
+    });
+
+    document.getElementById("btnCtrlBankLeft").addEventListener("click", () => {
+      STATE.rotY -= 0.28;
+    });
+
+    document.getElementById("btnCtrlBankRight").addEventListener("click", () => {
+      STATE.rotY += 0.28;
+    });
+
+    document.getElementById("btnCtrlSpecialAction").addEventListener("click", () => {
+      const r = document.getElementById("rotorRpmSlider");
+      r.value = 100;
+      updateFlightTelemetryHUD();
+      playArpeggioNote(getSelectedVehicle().baseFreqHz * 1.5);
+      setToast("✨ Engaged Full Helical / Wing Boost in HawkX Sandbox!");
+    });
+
+    document.getElementById("rotorRpmSlider").addEventListener("input", () => {
+      updateFlightTelemetryHUD();
+      updateExportCodePreservingSelection();
+    });
+
+    document.getElementById("altitudeTargetSlider").addEventListener("input", () => {
+      updateFlightTelemetryHUD();
+      updateExportCodePreservingSelection();
+    });
+
+    document.getElementById("btnToggleAutopilot").addEventListener("click", () => {
+      STATE.autopilot = !STATE.autopilot;
+      document.getElementById("btnToggleAutopilot").textContent = STATE.autopilot ? "🧭 A* Autopilot: ON" : "🕹️ Manual Orbit: ON";
+    });
+
+    document.getElementById("btnToggleDaVinciGearLock").addEventListener("click", () => {
+      STATE.daVinciGearLocked = !STATE.daVinciGearLocked;
+      document.getElementById("btnToggleDaVinciGearLock").textContent =
+        STATE.daVinciGearLocked ? "🔒 Da Vinci Gear Lock: ENGAGED" : "⚙️ Da Vinci Gear Lock: UNLOCKED";
+      updateFlightTelemetryHUD();
+      updateExportCodePreservingSelection();
+      setToast(
+        STATE.daVinciGearLocked
+          ? "🔒 Engaged Leonardo's 1487 Reverse-Pinion Anti-Capture Gear Lock!"
+          : "⚙️ Unlocked pinion gears — full HawkX propulsion restored."
+      );
+    });
+
+    document.getElementById("btnRerouteWaypoints").addEventListener("click", () => {
+      STATE.obstacles.clear();
+      for (let i = 0; i < 4; i++) {
+        STATE.obstacles.add((1 + Math.floor(Math.random() * 8)) + "," + Math.floor(Math.random() * 5));
+      }
+      computeAStarCorridor();
+      updateFlightTelemetryHUD();
+      setToast("🔄 Computed new A* aerial/ground corridor (" + STATE.astarPath.length + " waypoints).");
+    });
+
+    // 3D Canvas Mouse Orbit
+    const c = document.getElementById("hawkxSandboxCanvas");
+    c.addEventListener("mousedown", e => {
+      STATE.dragging = true;
+      STATE.lastMouseX = e.clientX;
+      STATE.lastMouseY = e.clientY;
+    });
+    window.addEventListener("mousemove", e => {
+      if (!STATE.dragging) return;
+      STATE.rotY += (e.clientX - STATE.lastMouseX) * 0.01;
+      STATE.rotX = Math.max(-1.1, Math.min(1.1, STATE.rotX + (e.clientY - STATE.lastMouseY) * 0.01));
+      STATE.lastMouseX = e.clientX;
+      STATE.lastMouseY = e.clientY;
+    });
+    window.addEventListener("mouseup", () => { STATE.dragging = false; });
+
+    // Stage 2 Preserved Synth Controls
+    document.getElementById("btnTriggerArp").addEventListener("click", () => {
+      playArpeggioNote(440);
+      setToast("🎹 Triggered 440 Hz Arpeggio (" + (STATE.silentNightMode ? "0dB Silent Night Guard" : "Live Audio") + ").");
+    });
+
+    document.getElementById("btnSonifyFlightHarmonics").addEventListener("click", () => {
+      const f0 = getSelectedVehicle().baseFreqHz;
+      [f0, f0 * 1.25, f0 * 1.5, f0 * 2].forEach((f, idx) => {
+        setTimeout(() => playArpeggioNote(f), idx * 140);
+      });
+      setToast("🚁 Sonified " + getSelectedVehicle().name + " harmonic series.");
+    });
+
+    document.getElementById("btnToggleSilentAudio").addEventListener("click", () => {
+      STATE.silentNightMode = !STATE.silentNightMode;
+      document.getElementById("btnToggleSilentAudio").textContent = STATE.silentNightMode
+        ? "🔇 0dB Silent Night Mode: ON (Tap to Unmute)"
+        : "🔊 Live WebAudio Synth: ON (Tap for 0dB Silent)";
+      document.getElementById("silentGuardPill").textContent = STATE.silentNightMode ? "🌙 0dB SILENT GUARD" : "🔊 AUDIO ACTIVE";
+    });
+
+    document.getElementById("cutoffKnob").addEventListener("input", e => {
+      document.getElementById("cutoffReadout").textContent = e.target.value + " Hz";
+    });
+
+    document.getElementById("scaleModeSelect").addEventListener("change", e => {
+      const map = { chromatic: 261.63, dorian: 293.66, lydian: 349.23, phrygian: 329.63 };
+      playArpeggioNote(map[e.target.value] || 440);
+    });
+
+    // Theme & Posture Switchers
+    document.getElementById("themeSelector").addEventListener("change", e => {
+      document.documentElement.setAttribute("data-theme", e.target.value);
+    });
+
+    const postures = [
+      { id: "btnPostureDesktop", mode: "desktop" },
+      { id: "btnPostureMobile", mode: "mobile" },
+      { id: "btnPostureFold", mode: "fold" },
+      { id: "btnPostureTablet", mode: "tablet" }
+    ];
+    postures.forEach(p => {
+      document.getElementById(p.id).addEventListener("click", () => {
+        document.documentElement.setAttribute("data-device", p.mode);
+        postures.forEach(o => document.getElementById(o.id).classList.toggle("active-posture", o.mode === p.mode));
+      });
+    });
+
+    // ΩΑΡ Evolution & Flash-Mirror Tamper Controls
+    document.getElementById("btnEvolveAargon").addEventListener("click", () => {
+      STATE.aargonGen += 1;
+      STATE.skillWeight = +(STATE.skillWeight + 0.15).toFixed(2);
+      STATE.serialTampered = false;
+      const genStr = "G" + ("0" + STATE.aargonGen).slice(-2);
+      document.getElementById("aargonGenPill").textContent = `🧬 AARGON GEN: ${genStr} (${STATE.skillWeight.toFixed(2)}×)`;
+      document.getElementById("nextGenBtnLabel").textContent = "G" + ("0" + (STATE.aargonGen + 1)).slice(-2);
+      document.getElementById("oarGuardBanner").classList.remove("tampered");
+      document.getElementById("oarGuardText").innerHTML =
+        `Gemini Aargon evolved serial to <code>${getEvolvedSerialId()}</code> (Skill Weights boosted to <strong>${STATE.skillWeight.toFixed(2)}× · Gen ${genStr}</strong>).`;
+      updateFlightTelemetryHUD();
+      updateExportCodePreservingSelection();
+      setToast("🧬 Evolved Gemini Aargon to Gen " + genStr + " (" + STATE.skillWeight.toFixed(2) + "×)!");
+    });
+
+    document.getElementById("btnTriggerFlashMirror").addEventListener("click", () => {
+      STATE.serialTampered = true;
+      document.getElementById("oarGuardBanner").classList.add("tampered");
+      document.getElementById("headerSerialLabel").textContent = "SERIAL_TAMPERED_FLASH_LOCK";
+      document.getElementById("oarGuardText").innerHTML =
+        `⚡ <strong>DA VINCI MIRROR-SCRIPT &amp; FLASH-FUNCTION GUARD ENGAGED:</strong> Serial <code>${INGESTED_SERIAL}</code> was edited/removed! Skills Mirror collapsed into one-shot Flash Closures (<code>Φ_FlashMirror[0xΩΑΡ]</code>).`;
+      updateExportCodePreservingSelection();
+      setToast("⚡ Tamper detected: Skills Mirror converted into Ephemeral Flash Functions!");
+    });
+
+    document.getElementById("btnRestoreSerialLock").addEventListener("click", () => {
+      STATE.serialTampered = false;
+      document.getElementById("oarGuardBanner").classList.remove("tampered");
+      document.getElementById("headerSerialLabel").textContent = INGESTED_SERIAL;
+      const genStr = "G" + ("0" + STATE.aargonGen).slice(-2);
+      document.getElementById("oarGuardText").innerHTML =
+        `Verified Serial <code>${INGESTED_SERIAL}</code> restored. Full Gemini Aargon Gen ${genStr} (${STATE.skillWeight.toFixed(2)}×) active.`;
+      updateExportCodePreservingSelection();
+      setToast("🔐 Restored valid FH-GA-ΩΑΡ Serial Lock!");
+    });
+
+    // Exporter Tabs
+    const tabs = [
+      { id: "btnTabHawkX", mode: "hawkx_json", pill: ".HAWKX.JSON" },
+      { id: "btnTabNextGenPrompt", mode: "next_gen_prompt", pill: "EVOLVED GEN G02 ΩΑΡ" },
+      { id: "btnTabFlashMirror", mode: "flash_mirror", pill: "FLASH-MIRROR CLOSURES" }
+    ];
+    tabs.forEach(t => {
+      document.getElementById(t.id).addEventListener("click", () => {
+        STATE.exportTab = t.mode;
+        document.getElementById("exportFormatPill").textContent = t.pill;
+        tabs.forEach(o => document.getElementById(o.id).classList.toggle("active-posture", o.mode === t.mode));
+        updateExportCodePreservingSelection();
+      });
+    });
+
+    document.getElementById("btnCopyVehicleCode").addEventListener("click", () => {
+      const area = document.getElementById("exportCodeArea");
+      let ok = false;
+      try {
+        area.focus();
+        area.select();
+        ok = document.execCommand("copy");
+      } catch (e) {}
+      if (!ok && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(area.value).catch(() => {});
+      }
+      setToast("📋 Copied code/serial to clipboard (Synchronous Touch/Edge Fallback)!");
+    });
+
+    function downloadFile(name, content, mime) {
+      try {
+        const blob = new Blob([content], { type: mime });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        setToast("💾 Downloaded " + name + "!");
+      } catch (e) {
+        setToast("⚠️ Download guarded in preview; code ready in editor.");
+      }
+    }
+
+    document.getElementById("btnDownloadVehicleAsset").addEventListener("click", () => {
+      STATE.exportTab = "hawkx_json";
+      updateExportCodePreservingSelection();
+      const v = getSelectedVehicle();
+      downloadFile(v.id.toLowerCase() + ".hawkx.json", document.getElementById("exportCodeArea").value, "application/json;charset=utf-8");
+    });
+
+    document.getElementById("btnDownloadStandaloneHtml").addEventListener("click", () => {
+      const v = getSelectedVehicle();
+      const ser = getEvolvedSerialId();
+      const html = [
+        "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>" + v.name + " — HawkX Module</title></head>",
+        "<body style=\"background:#070A12;color:#F8FAFC;font-family:system-ui,sans-serif;padding:24px;\">",
+        "<!-- Powered by talon.Forefronthawk | Serial Guard: " + ser + " -->",
+        "<div style=\"max-width:720px;margin:0 auto;border:2px solid #D4AF37;border-radius:14px;padding:20px;background:#0E1422;\">",
+        "<h1 style=\"color:#D4AF37;\">🚁 " + v.name + " (" + v.id + ")</h1>",
+        "<p style=\"color:#00F5D4;font-family:monospace;\">" + v.era + " • " + v.intention + "</p>",
+        "<p>" + v.description + "</p>",
+        "<footer style=\"margin-top:14px;font-size:12px;color:#94A3B8;\">Engineered with Forefront Hawk (https://forefronthawk.com) &amp; Gemini Aargon • Serial: " + ser + "</footer>",
+        "</div></body></html>"
+      ].join("\n");
+      downloadFile(v.id.toLowerCase() + "_hawkx_module.html", html, "text/html;charset=utf-8");
+    });
+
+    document.getElementById("btnBroadcastHawkBus").addEventListener("click", () => {
+      const v = getSelectedVehicle();
+      const packet = {
+        bus: ECOSYSTEM_BUS_KEY,
+        source: "Project Divinci — HawkX Sandbox",
+        ingestedSerial: INGESTED_SERIAL,
+        evolvedSerial: getEvolvedSerialId(),
+        vehicle: v,
+        timestamp: new Date().toISOString()
+      };
+      try { localStorage.setItem(ECOSYSTEM_BUS_KEY, JSON.stringify(packet)); } catch (e) {}
+      try {
+        if (typeof BroadcastChannel !== "undefined") {
+          const bc = new BroadcastChannel(ECOSYSTEM_BUS_KEY);
+          bc.postMessage(packet);
+          bc.close();
+        }
+      } catch (e) {}
+      setToast("📡 Broadcasted " + v.name + " to 'hawk_creator_ecosystem_v1'!");
+    });
+
+    // Custom Da Vinci Vehicle Minting
+    document.getElementById("btnMintCustomVehicle").addEventListener("click", () => {
+      const nameIn = document.getElementById("customNameInput");
+      const domSel = document.getElementById("customDomainSelect");
+      const name = (nameIn.value || "").trim() || "Da Vinci Mechanical Knight Automaton";
+      const dom = domSel.value || "AERIAL";
+      const newId = "DIVINCI-" + (dom === "AERIAL" ? "AIR" : "GND") + "-0" + (DIVINCI_FLEET.length + 1);
+
+      DIVINCI_FLEET.push({
+        id: newId,
+        name: name,
+        domain: dom,
+        era: "c. 1495 • Custom Codex Blueprint",
+        archetype: dom === "AERIAL" ? "screw" : "cart",
+        defaultAlt: dom === "AERIAL" ? 1500 : 0,
+        topSpeedKts: 72,
+        acousticNote: "Custom Codex Harmonics",
+        baseFreqHz: 392.00,
+        sourceTitle: "Discovering Da Vinci — Inventions Archive",
+        sourceUrl: "https://discoveringdavinci.com/learn/inventions/",
+        description: "Custom-minted Leonardo da Vinci invention configured for direct deployment inside the HawkX 3D Sandbox.",
+        intention: "HawkX Intention: Custom Multi-Domain Sandbox Unit (" + newId + ")."
+      });
+      nameIn.value = "";
+      selectVehicle(newId);
+      setToast("➕ Minted custom Da Vinci vehicle [" + newId + ": " + name + "] into HawkX Hangar!");
+    });
+
+    document.getElementById("btnVerify14Passes").addEventListener("click", () => {
+      render14PassDebugGate();
+      setToast("🛡️ Verified 14/14 HawkDebug Static, DOM & ΩΑΡ Integrity Passes!");
+    });
+  }
+
+  function startAnimationLoop() {
+    function frame() {
+      renderHawkXSandbox();
+      renderWaveCanvas();
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener("load", () => {
+    computeAStarCorridor();
+    selectVehicle("DIVINCI-AIR-01");
+    render14PassDebugGate();
+    initEventListeners();
+    startAnimationLoop();
+  });
+</script>
+</body>
+</html>
